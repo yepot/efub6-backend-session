@@ -14,6 +14,7 @@ import com.practice.efubaccount.post.dto.summary.PostSummary;
 import com.practice.efubaccount.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,8 @@ public class PostService {
                 size,
                 Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))
         );
-        Page<PostSummary> posts = postRepository.findPostSummaries(pageRequest);
+        List<PostSummary> postSummaries = postRepository.findPostSummaries(pageRequest.getOffset(), size);
+        Page<PostSummary> posts = new PageImpl<>(postSummaries, pageRequest, postRepository.count());
         return PostPageResponse.from(posts);
     }
 
